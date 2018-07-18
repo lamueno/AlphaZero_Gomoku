@@ -6,15 +6,20 @@ An implementation of the training pipeline of AlphaZero for Gomoku
 """
 
 from __future__ import print_function
+import sys
+import os
+import pickle
 import random
-import numpy as np
 from collections import defaultdict, deque
+
+import numpy as np
+
 from game import Board, Game
 from mcts_pure import MCTSPlayer as MCTS_Pure
 from mcts_alphaZero import MCTSPlayer
-from policy_value_net import PolicyValueNet  # Theano and Lasagne
+# from policy_value_net import PolicyValueNet  # Theano and Lasagne
 # from policy_value_net_pytorch import PolicyValueNet  # Pytorch
-# from policy_value_net_tensorflow import PolicyValueNet # Tensorflow
+from policy_value_net_tensorflow import PolicyValueNet # Tensorflow
 # from policy_value_net_keras import PolicyValueNet # Keras
 
 
@@ -191,5 +196,21 @@ class TrainPipeline():
 
 
 if __name__ == '__main__':
-    training_pipeline = TrainPipeline()
+    argv = sys.argv[:]
+    model_file = None
+    if argv[1].startswith('--'):   
+        option = sys.argv[1][2:]   
+        # fetch sys.argv[1] but without the first two characters   
+        if option == 'model':
+            model_file = sys.argv[2]
+            try:
+                policy_param = pickle.load(open(model_file, 'rb'), encoding='bytes')
+            except Exception as e:
+                print(f'Error: {e}')
+
+    if model_file:
+        training_pipeline = TrainPipeline(model_file)
+    else:
+        training_pipeline = TrainPipeline()
+        
     training_pipeline.run()
