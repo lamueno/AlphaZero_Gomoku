@@ -198,7 +198,7 @@ class TrainPipeline():
 if __name__ == '__main__':
     argv = sys.argv[:]
     model_file = None
-    if argv[1].startswith('--'):   
+    if len(argv) > 2 and argv[1].startswith('--'):   
         option = sys.argv[1][2:]   
         # fetch sys.argv[1] but without the first two characters   
         if option == 'model':
@@ -212,5 +212,5 @@ if __name__ == '__main__':
         training_pipeline = TrainPipeline(model_file)
     else:
         training_pipeline = TrainPipeline()
-        
+
     training_pipeline.run()
